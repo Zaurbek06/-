@@ -1,38 +1,46 @@
 import React from "react";
-import Styles from './Dialogs.module.css';
-import { NavLink } from "react-router-dom";
+import Styles from "./Dialogs.module.css";
+import DialogItem from "./DialogItem/DialogItem";
+import Message from "./Message/Message";
+import { sendMessageCreator, updateNewMessageBodyCreator } from "../Redux/state";
+
+const Dialogs = (props) => {
 
 
-const Dialogs = () => {
-    return (
-        <div className={Styles.dialogs}>
-            <div className={Styles.dialogsItems}>
-                <div className={Styles.dialog}>
-                       <NavLink to="/dialogs/1">Dima</NavLink> 
-                </div>
-                <div className={Styles.dialog}>
-                       <NavLink to="/dialogs/2">Andrey</NavLink>
-                </div>
-                <div className={Styles.dialog}>
-                       <NavLink to="/dialogs/3">Sveta</NavLink> 
-                </div>
-                <div className={Styles.dialog}>
-                       <NavLink to="/dialogs/4">Sasha</NavLink> 
-                </div>
-                <div className={Styles.dialog}>
-                       <NavLink to="/dialogs/5">Viktor</NavLink> 
-                </div>
-                <div className={Styles.dialog}>
-                       <NavLink to="/dialogs/6">Valera</NavLink> 
-                </div>
-            </div>
-            <div className={Styles.messages}>
-               <div className={Styles.message}>hey</div>
-               <div className={Styles.message}>hay are you Valer</div>
-               <div className={Styles.message}>Brom</div> 
-            </div>
+  let state = props.store.getState().dialogsPage
+ 
+
+  let dialogsElements = state.dialogs.map((dialog) => (
+    <DialogItem name={dialog.name} id={dialog.id} />
+  ));
+  let messagesElements = state.messages.map((message) => (
+    <Message message={message.message} id={message.id} />
+  ));
+  let newMessageBody = state.newMessageBody
+
+  let onSendMessageClick = () => {
+    props.store.dispatch(sendMessageCreator())
+  }
+
+  let onNewMessageChange = (e) => {
+    let body = e.target.value
+    props.store.dispatch(updateNewMessageBodyCreator (body))
+  }
+
+  return (
+    <div className={Styles.dialogs}>
+      <div className={Styles.dialogsItems}>
+        {dialogsElements}
+      </div>
+      <div className={Styles.messages}>
+        <div>{messagesElements}</div>
+        <div>
+          <div><textarea value={newMessageBody} onChange={onNewMessageChange} placeholder="New message"></textarea></div>
+          <div><button onClick={onSendMessageClick}>Send</button></div>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
 export default Dialogs;
